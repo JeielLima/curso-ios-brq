@@ -7,6 +7,9 @@
  * Um contexto no CoreData está relacionado a quais entidades o mesmo pode gerenciar: fazer CRUD das mesmas.
  
  * Try e Catch: é mecanismo que permite tentar fazer algo com possibilidade de tratarmos este erro sem que o aplicativo pare.
+ 
+ *
+ 
 */
 
 import Foundation
@@ -15,13 +18,23 @@ import CoreData
 
 class DataController {
     
+    let container = NSPersistentContainer(name: "FoodModel")
+    
+    init() {
+        container.loadPersistentStores { (description, error) in
+            if let errorIfLet = error {
+                print("Erro ao carregar os dados \(errorIfLet)")
+            }
+        }
+    }
+    
     func save(context: NSManagedObjectContext) {
         
         do {
             try context.save()
         }
         catch {
-            print("Erro ao salvar os dados do contexto")
+            print("Erro ao salvar os dados do contexto \(error)")
         }
     }
 
@@ -41,7 +54,12 @@ class DataController {
         //Criar função salvar no context
     }
     
-    func editFood() {
+    func editFood(foodOld: Food, name: String, calories: Double, context: NSManagedObjectContext) {
         
+        foodOld.name = name
+        foodOld.calories =  calories
+        foodOld.date = Date()
+        
+        save(context: context)
     }
 }

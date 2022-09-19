@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6F06F62A28D506F0006C0CF9 /* AddFoodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F06F62928D506F0006C0CF9 /* AddFoodView.swift */; };
 		6F81F58028D3B73600AE2022 /* ProjVerao2024App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F81F57F28D3B73600AE2022 /* ProjVerao2024App.swift */; };
 		6F81F58228D3B73600AE2022 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F81F58128D3B73600AE2022 /* ContentView.swift */; };
 		6F81F58428D3B73900AE2022 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6F81F58328D3B73900AE2022 /* Assets.xcassets */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6F06F62928D506F0006C0CF9 /* AddFoodView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFoodView.swift; sourceTree = "<group>"; };
 		6F81F57C28D3B73600AE2022 /* ProjVerao2024.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProjVerao2024.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6F81F57F28D3B73600AE2022 /* ProjVerao2024App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjVerao2024App.swift; sourceTree = "<group>"; };
 		6F81F58128D3B73600AE2022 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -59,6 +61,7 @@
 				6F81F59428D3BBE900AE2022 /* DataModel */,
 				6F81F57F28D3B73600AE2022 /* ProjVerao2024App.swift */,
 				6F81F58128D3B73600AE2022 /* ContentView.swift */,
+				6F06F62928D506F0006C0CF9 /* AddFoodView.swift */,
 				6F81F58328D3B73900AE2022 /* Assets.xcassets */,
 				6F81F58828D3B73900AE2022 /* Info.plist */,
 				6F81F58528D3B73900AE2022 /* Preview Content */,
@@ -152,6 +155,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6F06F62A28D506F0006C0CF9 /* AddFoodView.swift in Sources */,
 				6F81F58228D3B73600AE2022 /* ContentView.swift in Sources */,
 				6F81F59628D3BCE200AE2022 /* DataController.swift in Sources */,
 				6F81F58028D3B73600AE2022 /* ProjVerao2024App.swift in Sources */,

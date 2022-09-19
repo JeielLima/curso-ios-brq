@@ -5,8 +5,8 @@
 //  Created by Jeiel Lima on 15/09/22.
 //
 
+
 import SwiftUI
-import ObjectiveC
 
 @main
 struct ProjVerao2024App: App {

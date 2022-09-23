@@ -7,11 +7,13 @@
 
 import SwiftUI
 
+import SwiftUI
+
 @main
 struct ProfessoresCRUDApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView().environmentObject(ViewModel())
         }
     }
 }

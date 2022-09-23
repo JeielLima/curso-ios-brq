@@ -1,34 +1,104 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @EnvironmentObject var viewModel : ViewModel
+    
+    @State var isAddView : Bool = false
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+        
+        VStack{
+            NavigationView{
+                
+                List{
+                    
+                    /**
+                        o parâmetro id é utilizado para saber como identificar unicamente cada objeto. Para isso, ele espera qual atributo do PROFESSORMODEL possa ser utilizado para esta identificação. Então, temos que usar o  \.NOMEDAVARIAVEL.
+                     */
+                    ForEach(viewModel.items.sorted(by: {$0.id>$1.id}), id: \.id){ item in
+                        
+                        VStack<ContentView> {
+                            //Text("\(item.nome)")
+                            NavigationLink(destination: EditProfessorView(professor: item), label: {
+                                Text("\(item.nome)")
+                            })
+
+                        }// Vstack
+                    }// Foreach
+                    .onDelete(perform: deleteProfessores)
+                    
+                } // List
+                
+                .toolbar{
+                    ToolbarItem (placement: .navigationBarTrailing){
+                        Button( action: {
+                            isAddView = true
+                        }, label: {
+                            Label("Add Professor", systemImage: "plus.circle")
+                        } )
+                    } // ToolbarItem
+                    
+                } // toolbar
+                .sheet(isPresented: $isAddView){
+                    AddProfessoresView()
+                }
+                
+            } // NavigationView
+        }// VSTACK
+    } // body
+    
+    /**
+     IndexSet é uma estrutura que retorna quais elementos foram selecionados para deletarmos
+     */
+    func deleteProfessores(offset : IndexSet){
+        
+        // eu posso ter um Array de IDs para ver excluídos Ex: [1, 500]
+        let idsArray = offset.map({
+            // pego o id do projeto que precido deletar através do índice do vetor selecionado pelo usuário, que está no indexSet
+            viewModel.items[$0].id
             
-            Button("Add"){
-                ViewModel().createProfessor(nome: "Jeiel", email: "jeiel@ios.com")
-            }
-            
-            Button("Update"){
-                ViewModel().updateProfessores(id: 646, nome: "Jeiel ASUEHAS", email: "jeiel@ouarg.com")
-            }
-            
-            Button("Delete"){
-                ViewModel().deleteProfessores(id: 646)
-            }
-            Button("Stress Button"){
-                ViewModel().fetchProfessores()
-            }
         }
-        .padding()
+        )
+        
+        /**
+            Para cada elemento (id do professor) que queremos deletar,
+                    temos que fazer uma requisição para a API
+         */
+        // idsArray = [4,7]
+        for i in idsArray{
+            viewModel.deleteProfessores(id: i)
+        }
+        
+        //viewModel.fetchProfessores()
+                
+    }
+}
+
+struct ButtonsTestView : View{
+    
+    var body: some View{
+        
+        
+        Button("Add"){
+            ViewModel().createProfessor(nome: "Fabrizio V", email: "TTT7")
+        }
+        
+        Button("Update"){
+            ViewModel().updateProfessores(id: 630, nome: "Fabrizio GGGG", email: "YJFJFK")
+        }
+        
+        Button("Delete"){
+            ViewModel().deleteProfessores(id: 630)
+        }
+        Button("Stress Button"){
+            ViewModel().fetchProfessores()
+        }
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        ContentView().environmentObject(ViewModel())
     }
 }

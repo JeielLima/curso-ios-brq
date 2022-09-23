@@ -1,43 +1,66 @@
-//
-//  ViewModel.swift
-//  ProfessoresCRUD
-//
-//  Created by Jeiel Lima on 21/09/22.
-//
+
 
 import Foundation
 
-// responsável por pegar os objetos
-class ViewModel {
+
+    class ViewModel : ObservableObject {
     
-    var items: [ProfessorModel] = []
-    let urlAddr: String = "https://cors.grandeporte.com.br/cursos.grandeporte.com.br:8080/professores"
+    let urlAddr : String = "https://cors.grandeporte.com.br/cursos.grandeporte.com.br:8080/professores"
     
-    func fetchProfessores() {
-      
-        guard let url = URL(string: "https://cors.grandeporte.com.br/cursos.grandeporte.com.br:8080/professores") else {
-            print ("URL NOT FOUND")
+    // @Published serve para notificar a tela (swift ui) quando esta variável for modificada
+    @Published var items : [ProfessorModel] = []
+    
+    // fazer um construtor para quando instanciarmos um objeto do tipo View Model,
+    // a variável items será carregada com os professores vindo da API
+    init(){
+        fetchProfessores()
+    }
+    
+    /**
+                Fetch é pegar todos os dados da API
+     */
+    func fetchProfessores(){
+        
+        guard let url = URL(string: urlAddr) else {
+            print("URL NOT FOUND")
             return
         }
         
-        URLSession.shared.dataTask(with: url) { (data, res, error) in
+        /**
+            dataTask é para criar uma tarefa de forma assíncrona para que o usuário
+                    possa fazer outras coisas em paralelo sem precisar ficar esperando
+                            a resposta da requisição
+         
+                O shared é uma variável que está dentro da classe URLSession e serve para compartilhar/executar tasks
+                    na aplicação para criar as requisições feitas pelo APP de forma assíncrona
+         */
+        URLSession.shared.dataTask(with: url){ (data, res, error) in
+            
             if error != nil {
                 print("error \(error!)")
                 return
-            }
+            } //if
+            
+            /**
+             Publishing changes from background threads is not allowed; make sure to publish values from the main thread (via operators like receive(on:)) on model updates.
+             */
             do {
-                if let data = data {
+                if let data  = data{
                     let result = try JSONDecoder().decode([ProfessorModel].self, from: data)
+                    
                     self.items = result
+                    print(" Count \(self.items.count) ")
                 }
-            } catch {
-                print("Fetch-Error")
-            }
-        } .resume()         // o resume é necessário para executar a task
-
+            }// do
+            catch {
+                print("fetch error \(error)")
+            } // catch
+            
+        }.resume()
+        // o resume é necessário para executar a task
     }
     
-    func createProfessor(nome: String, email: String) {
+    func createProfessor(nome: String, email: String){
         
         guard let url = URL(string: urlAddr) else {
             print("URL NOT FOUND")
@@ -48,31 +71,47 @@ class ViewModel {
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        let professor: ProfessorModel = ProfessorModel(id: 0, nome: nome, email: email)
-        do {
+        
+        let professor : ProfessorModel = ProfessorModel(id:0, nome:nome, email:email)
+        
+        do{
+            // serializando para enviar para a API
             request.httpBody = try JSONEncoder().encode(professor)
-        } catch {
+        }
+        catch{
             print("Erro ao converter o professor")
         }
         
-        URLSession.shared.dataTask(with: request) { (data, res, error) in
+        // agora é criar a tarefa que vai fazer a requisição para a API
+        
+        URLSession.shared.dataTask(with: request){ (data, res, error) in
             
             if error != nil {
-                print("error \(error!)")
+                print("error: \(error!)")
                 return
-            }
-            do {
-                if let data = data {
+            }// if
+            
+            do{
+                // pegando a resposta da API
+                if let data = data{
                     let result = try JSONDecoder().decode(ProfessorModel.self, from: data)
+                    
+                    print("CREATE : \(result.id)")
+                    
+                    self.fetchProfessores()
                 }
-            } catch {
+            }//do
+            catch {
                 print("Erro ao converter o professor")
-            }
-        } .resume()
+            }//catch
+            //resume executa a tarefa
+        }.resume()
+        //dataTask
+        
     }
     
     func updateProfessores(id : Int, nome : String, email: String){
-            
+        
         guard let url = URL(string: "\(urlAddr)/\(id)") else {
             print("URL NOT FOUND")
             return
@@ -82,29 +121,44 @@ class ViewModel {
         request.httpMethod = "PATCH"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        let professor : ProfessorModel = ProfessorModel(id:id, nome:nome, email:email)
         
-        do {
+        let professor : ProfessorModel = ProfessorModel(id:id, nome:nome, email:email)
+        // ENCODER tranforma um objeto swift em um JSON que será enviado para a API
+        do{
+            // serializando para enviar para a API
             request.httpBody = try JSONEncoder().encode(professor)
         }
-        catch {
+        catch{
             print("Erro ao converter o professor")
         }
-
+        
+        // agora é criar a tarefa que vai fazer a requisição para a API
+        
         URLSession.shared.dataTask(with: request){ (data, res, error) in
             
             if error != nil {
                 print("error: \(error!)")
                 return
-            }
-            do {
+            }// if
+            
+            do{
+                // pegando a resposta da API
                 if let data = data{
+                    // DECODER tranforma um JSON (em geral vem da API) para um objeto swift
                     let result = try JSONDecoder().decode(ProfessorModel.self, from: data)
+                    
+                    print("UPDATE : \(result.id)")
+                    
+                    self.fetchProfessores()
                 }
-            } catch {
+            }//do
+            catch {
                 print("Erro ao converter o professor")
-            }
+            }//catch
+            //resume executa a tarefa
         }.resume()
+        //dataTask
+        
     }
     
     func deleteProfessores(id : Int){
@@ -123,14 +177,24 @@ class ViewModel {
             if error != nil {
                 print("error: \(error!)")
                 return
-            }
+            }// if
+            
+            self.fetchProfessores()
+            
+            //resume executa a tarefa
         }.resume()
+        //dataTask
+        
     }
     
     func stressFunction(){
         
-        for i in 1...1000{
-            createProfessor(nome: "Professor \(i)", email: "Email \(i)")
-        }
+//        for i in 1...1000{
+//            createProfessor(nome: "Professor \(i)", email: "Email \(i)")
+//        }
+        
+//        for i in 705...2000{
+//            deleteProfessores(id: i)
+//        }
     }
 }
